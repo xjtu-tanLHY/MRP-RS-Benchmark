@@ -53,10 +53,11 @@ def build_question(item: ImageItem, distractors: List[str]) -> Question:
 
 def _build_test_prompt(question: Question) -> str:
     return (
-        "请观察这张遥感图像，图像中有一个被遮挡/缺失的区域。"
-        "请从以下选项中选出缺失区域最可能包含的物品或地物，只需回答选项字母。\n\n"
+        "Look at this remote sensing image. There is a masked/missing region. "
+        "Choose the object or land-cover type that the missing region most likely contains. "
+        "Answer with only the option letter.\n\n"
         f"{question.format_options()}\n\n"
-        "请只回答一个字母（A/B/C/D/E），不要解释。"
+        "Answer with a single letter (A/B/C/D/E), no explanation."
     )
 
 

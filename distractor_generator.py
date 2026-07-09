@@ -11,10 +11,11 @@ from data_loader import ImageItem
 
 def _build_distractor_prompt() -> str:
     return (
-        "你是一个遥感图像分析专家。请观察这张遥感图像，"
-        "图像中有一个被遮挡/缺失的区域。请列出图中可能存在但与缺失区域无关的物品或地物。"
-        "请以JSON数组格式返回，只返回数组，不要其他内容。例如：[\"道路\",\"河流\",\"农田\"]。"
-        f"请至少列出{NUM_DISTRACTORS + 2}个候选干扰项。"
+        "You are a remote sensing image analysis expert. Look at this remote sensing image, "
+        "which contains a masked/missing region. List objects or land-cover types that may appear "
+        "in the image but are NOT related to the missing region. "
+        "Return a JSON array only, with no extra text. Example: [\"road\", \"river\", \"farmland\"]. "
+        f"Provide at least {NUM_DISTRACTORS + 2} candidate distractors."
     )
 
 
