@@ -295,7 +295,8 @@ class DIORPreparationTool:
 
         # 提示栏
         hint = (
-            "操作说明：鼠标左键拖拽画框 → s 保存（框内变白并写入 database/<标签>/） → "
+            "操作说明：鼠标左键拖拽画框 → s 保存（框内变白并写入 database/<标签>/，"
+            "未画框时按 s 会自动使用 DIOR 绿色虚线标注框） → "
             "r 重画 → n 跳过 → q 退出"
         )
         self.hint_label = tk.Label(
@@ -468,11 +469,18 @@ class DIORPreparationTool:
         self._render()
 
     def _save_sample(self):
-        if self.current_bbox is None:
+        if self.current_bbox is not None:
+            # 使用用户手动画的框
+            orig_bbox = self._to_original_coords(self.current_bbox)
+            source = "manual"
+        elif self.anno_bbox is not None:
+            # 未手动画框时，使用 DIOR 原始标注框自动遮蔽
+            orig_bbox = self.anno_bbox
+            source = "auto"
+        else:
             messagebox.showwarning("未画框", "请先使用鼠标左键拖拽画出目标区域")
             return
 
-        orig_bbox = self._to_original_coords(self.current_bbox)
         x1, y1, x2, y2 = orig_bbox
         if x2 - x1 < 5 or y2 - y1 < 5:
             messagebox.showwarning("框太小", "框选区域太小，请重新画框")
@@ -487,14 +495,14 @@ class DIORPreparationTool:
             suffix=f"_{self.index:06d}",
         )
         self.saved_count += 1
-        self._log_saved(self.current_sample, orig_bbox, out_path)
+        self._log_saved(self.current_sample, orig_bbox, out_path, source=source)
         self._save_progress()
-        print(f"已保存: {out_path}  标签: {label}  遮挡区域: {orig_bbox}")
+        print(f"已保存: {out_path}  标签: {label}  来源: {source}  遮挡区域: {orig_bbox}")
         self._next_sample()
 
-    def _log_saved(self, sample, bbox, out_path):
+    def _log_saved(self, sample, bbox, out_path, source: str = "manual"):
         with open(self.saved_log_path, "a", encoding="utf-8") as f:
-            f.write(f"{out_path}\t{sample['image_path']}\t{sample['label']}\t{bbox}\n")
+            f.write(f"{out_path}\t{sample['image_path']}\t{sample['label']}\t{bbox}\t{source}\n")
 
     def _log_skipped(self, sample):
         with open(self.skipped_log_path, "a", encoding="utf-8") as f:
