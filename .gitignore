@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Environment variables
+.env
+
+# IDE
+.vscode/
+.idea/
+.codeartsdoer/
+
+# Outputs
+*.json
+results/
+output/
+List.md
+
+# Datasets and generated data
+DIOR/
+database/
+samples/
+CVSBench_sample/
+
+# OS
+.DS_Store
+Thumbs.db

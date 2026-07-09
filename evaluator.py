@@ -71,6 +71,7 @@ def ask_model(
     question: Question,
     client: Optional[OpenAI] = None,
 ) -> str:
+    """调用模型回答单道题目。每次请求都是无状态的，messages 中只包含当前题目，不携带历史对话。"""
     if client is None:
         client = OpenAI(api_key=API_KEY, base_url=BASE_URL)
 
@@ -171,7 +172,7 @@ def evaluate(questions: List[Question], client: Optional[OpenAI] = None) -> Eval
         if question.is_correct:
             result.per_label[label]["correct"] += 1
 
-        status = "✓" if question.is_correct else "✗"
+        status = "[正确]" if question.is_correct else "[错误]"
         print(f"  模型回答: {question.model_answer} {status}")
 
     return result

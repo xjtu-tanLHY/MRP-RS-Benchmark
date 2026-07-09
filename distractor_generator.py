@@ -30,6 +30,7 @@ def generate_distractors(
     all_labels: List[str],
     client: Optional[OpenAI] = None,
 ) -> List[str]:
+    """为单张图片生成干扰项。每次请求都是无状态的，不携带历史对话。"""
     if client is None:
         client = OpenAI(api_key=API_KEY, base_url=BASE_URL)
 
@@ -59,6 +60,11 @@ def generate_distractors(
                 temperature=0.8,
             )
             text = response.choices[0].message.content.strip()
+            # 兼容模型返回 Markdown 代码块的情况，如 ```json ... ```
+            if text.startswith("```"):
+                text = text.strip("`").strip()
+                if text.lower().startswith("json"):
+                    text = text[4:].strip()
             candidates = json.loads(text)
             if not isinstance(candidates, list):
                 raise ValueError("返回格式不是数组")
